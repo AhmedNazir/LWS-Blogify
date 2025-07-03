@@ -1,35 +1,45 @@
+"use client"
 import Image from "next/image";
-import BookmarkIcon from "../assets/BookmarkIcon";
+import BookmarkIconMark from "../assets/bookmark-mark.svg";
+import BookmarkIconUnmark from "../assets/bookmark-unmark.svg";
+import Link from "next/link";
 
 function generateUrl(title) {
-    return title.replaceAll(" ", "-");
+    // return title.replaceAll(" ", "-");
+    return title;
 }
 
-function ArticleItem({ articleInfo }) {
+function ArticleItem({ articleInfo, markedList, handleMarked }) {
     // Strip HTML tags and get the first sentence of the description.
     const plainDescription = articleInfo.description.replace(/<[^>]+>/g, "");
     const firstSentence =
         plainDescription.match(/[^.!?]+[.!?]/)?.[0] || plainDescription;
 
+    const bookmark = markedList.includes(articleInfo.id)
+        ? BookmarkIconMark.src
+        : BookmarkIconUnmark.src;
+
     return (
         <>
             <article className="mb-10 pb-10 border-b border-gray-200">
                 <div className="flex items-center mb-4">
-                    <img
+                    <Image
                         src={articleInfo.author.avatar}
                         alt="Author"
-                        className="h-6 w-6 rounded-full mr-2"
+                        width={24}
+                        height={24}
+                        className="rounded-full mr-2"
                     />
                     <span className="text-sm font-medium">
                         {articleInfo.author.name}
                     </span>
                 </div>
-                <a
-                    href={generateUrl(articleInfo.title)}
+                <Link
+                    href={"/" + generateUrl(articleInfo.title)}
                     className="text-xl font-bold mb-2 hover:underline cursor-pointer"
                 >
                     {articleInfo.title}
-                </a>
+                </Link>
                 <p className="text-gray-700 mb-4">{firstSentence}</p>
                 <div className="flex justify-between items-center">
                     <div className="flex items-center text-gray-500 text-sm">
@@ -45,8 +55,16 @@ function ArticleItem({ articleInfo }) {
                             {articleInfo.category}
                         </span>
                     </div>
-                    <button className="text-gray-400 hover:text-gray-600">
-                        <BookmarkIcon />
+                    <button
+                        className="text-gray-400 hover:text-gray-600"
+                        onClick={() => handleMarked(articleInfo.id)}
+                    >
+                        <Image
+                            src={bookmark}
+                            alt="bookmark Logo"
+                            width={20}
+                            height={20}
+                        />
                     </button>
                 </div>
             </article>

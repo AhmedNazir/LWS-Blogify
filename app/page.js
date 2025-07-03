@@ -3,34 +3,82 @@
 import Image from "next/image";
 import Sidebar from "./components/Sidebar";
 import ArticleItem from "./components/ArticleItem";
-import DATABASE from "./data/data1.json";
+import DATABASE from "./data/data.json";
 import { useState } from "react";
 
 export default function Home() {
     const [sort, setSort] = useState("latest");
     const [more, setMore] = useState(5);
+    const [marked, setMarked] = useState([]);
+    const [filters, setFilters] = useState([]);
 
-    let data = DATABASE;
+    function handleMarked(id) {
+        if (!marked.includes(id)) {
+            setMarked([...marked, id]);
+        } else {
+            setMarked(marked.filter((item) => item !== id));
+        }
+    }
+
+    function handleFilters(title) {
+        if (!filters.includes(title)) {
+            setFilters([...filters, title]);
+        } else {
+            setFilters(filters.filter((item) => item !== title));
+        }
+    }
+
+    let data;
+
+    if (filters.length === 0) data = DATABASE;
+    else {
+        data = DATABASE.filter((item) => filters.includes(item.category));
+    }
+
     if (sort === "latest") {
-        data = DATABASE.sort((a, b) => {
-            if (a.date < b.date) return -1;
-            else if (a.date > b.date) return 1;
-            return 0;
+        data = data.toSorted((a, b) => {
+            if (new Date(a.date) > new Date(b.date)) return -1;
+            else return 1;
         });
-    } else {
-        data = DATABASE.sort((a, b) => {
-            if (a.date > b.date) return -1;
-            else if (a.date < b.date) return 1;
-            return 0;
+    }
+
+    if (sort === "oldest") {
+        data = data.toSorted((a, b) => {
+            if (new Date(a.date) < new Date(b.date)) return -1;
+            else return 1;
+        });
+    }
+
+    if (sort === "marked") {
+        data = data.toSorted((a, b) => {
+            if (new Date(a.date) > new Date(b.date)) return -1;
+            else return 1;
+        });
+
+        data = data.toSorted((a, b) => {
+            if (marked.includes(a.id) && marked.includes(b.id)) {
+                if (new Date(a.date) > new Date(b.date)) return -1;
+            } else if (marked.includes(a.id) && !marked.includes(b.id))
+                return -1;
+            else if (!marked.includes(a.id) && marked.includes(b.id)) return 1;
+            else {
+                if (new Date(a.date) > new Date(b.date)) return -1;
+                else return 1;
+            }
         });
     }
 
     const ArticleList = data.slice(0, more).map((item) => {
-        return <ArticleItem articleInfo={item} key={item.title} />;
+        return (
+            <ArticleItem
+                articleInfo={item}
+                key={item.id}
+                markedList={marked}
+                handleMarked={handleMarked}
+            />
+        );
     });
 
-    console.log(sort);
-    console.log(more);
 
     return (
         <section className="py-10 border-t border-gray-200">
@@ -51,11 +99,12 @@ export default function Home() {
                                 <select
                                     id="sort"
                                     name="sort"
-                                    className="border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500"
+                                    className="border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 p-2"
                                     onChange={(e) => setSort(e.target.value)}
                                 >
                                     <option value="latest">Latest</option>
                                     <option value="oldest">Oldest</option>
+                                    <option value="marked">Marked First</option>
                                 </select>
                             </div>
                         </div>
@@ -68,12 +117,12 @@ export default function Home() {
                                 className="border border-gray-300 text-gray-700 px-6 py-3 rounded-full hover:bg-gray-50 transition-colors"
                                 onClick={() => {
                                     setMore((prev) =>
-                                        DATABASE.length > prev + 5
+                                        data.length > prev + 5
                                             ? prev + 5
-                                            : DATABASE.length
+                                            : data.length
                                     );
                                 }}
-                                hidden={more >= DATABASE.length ? true : false}
+                                hidden={more >= data.length ? true : false}
                             >
                                 Load more
                             </button>
@@ -81,7 +130,7 @@ export default function Home() {
                     </div>
 
                     {/* Sidebar */}
-                    <Sidebar />
+                    <Sidebar filters={filters} handleFilters={handleFilters} />
                 </div>
             </div>
         </section>
