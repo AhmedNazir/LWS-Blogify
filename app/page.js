@@ -79,7 +79,6 @@ export default function Home() {
         );
     });
 
-
     return (
         <section className="py-10 border-t border-gray-200">
             <div className="container mx-auto px-4">

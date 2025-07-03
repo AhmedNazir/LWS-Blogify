@@ -1,14 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import Sidebar from "../components/Sidebar";
 import DATABASE from "../data/data.json";
 import ArticleItem from "../components/ArticleItem";
 
-export default function Post() {
-    const article = DATABASE[0];
+export default function Post({ params }) {
+    const query = decodeURIComponent(params.post);
+    const result = DATABASE.filter((item) => item.title === query);
 
-    console.log(article);
+    const article = result[0];
+    // return <p>Post: {params.post}</p>;
 
     return (
         <>
