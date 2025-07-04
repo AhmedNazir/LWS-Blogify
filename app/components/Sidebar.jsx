@@ -4,9 +4,12 @@ import Link from "next/link";
 import DATABASE from "../data/data.json";
 import { useContext } from "react";
 import { TagContext } from "../contexts/TagContext";
+import { usePathname } from "next/navigation";
 
 function Sidebar() {
     const { tags, handleTags } = useContext(TagContext);
+    const pathname = usePathname();
+    const isHomePage = pathname === "/";
 
     const activeCss =
         "bg-green-200 font-medium px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition-colors";
@@ -103,7 +106,7 @@ function Sidebar() {
                             {tagsList.map((item) => {
                                 return (
                                     <Link
-                                        href={"#"}
+                                        href={isHomePage ? "#" : "/"}
                                         className={
                                             tags.includes(item)
                                                 ? activeCss
