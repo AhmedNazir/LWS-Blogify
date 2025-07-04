@@ -1,8 +1,12 @@
+"use client";
 import "./globals.css";
 import Logo from "./assets/logo.svg";
 import Image from "next/image";
 import ButtonStarted from "./assets/ButtonStarted";
 import Link from "next/link";
+import BookmarkProvider from "./contexts/BookmarkContext";
+import TagProvider from "./contexts/TagContext";
+import SortProvider from "./contexts/SortContext";
 
 export default function RootLayout({ children }) {
     return (
@@ -33,8 +37,11 @@ export default function RootLayout({ children }) {
                         </button>
                     </div>
                 </header>
-
-                {children}
+                <BookmarkProvider>
+                    <SortProvider>
+                        <TagProvider>{children}</TagProvider>
+                    </SortProvider>
+                </BookmarkProvider>
             </body>
         </html>
     );

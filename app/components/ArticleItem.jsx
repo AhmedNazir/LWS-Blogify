@@ -3,19 +3,23 @@ import Image from "next/image";
 import BookmarkIconMark from "../assets/bookmark-mark.svg";
 import BookmarkIconUnmark from "../assets/bookmark-unmark.svg";
 import Link from "next/link";
+import { useContext } from "react";
+import { BookmarkContext } from "../contexts/BookmarkContext";
 
 function generateUrl(title) {
     // return title.replaceAll(" ", "-");
     return title;
 }
 
-function ArticleItem({ articleInfo, markedList, handleMarked }) {
+function ArticleItem({ articleInfo }) {
+    const { marked, handleMarked } = useContext(BookmarkContext);
+
     // Strip HTML tags and get the first sentence of the description.
     const plainDescription = articleInfo.description.replace(/<[^>]+>/g, "");
     const firstSentence =
         plainDescription.match(/[^.!?]+[.!?]/)?.[0] || plainDescription;
 
-    const bookmark = markedList.includes(articleInfo.id)
+    const bookmark = marked.includes(articleInfo.id)
         ? BookmarkIconMark.src
         : BookmarkIconUnmark.src;
 
@@ -26,7 +30,7 @@ function ArticleItem({ articleInfo, markedList, handleMarked }) {
                     <img
                         src={articleInfo.author.avatar}
                         alt={articleInfo.author.name}
-                        className="h-12 w-12 rounded-full mr-4"
+                        className="h-5 w-5 rounded-full mr-4"
                     />
                     <span className="text-sm font-medium">
                         {articleInfo.author.name}

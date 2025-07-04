@@ -4,35 +4,22 @@ import Image from "next/image";
 import Sidebar from "./components/Sidebar";
 import ArticleItem from "./components/ArticleItem";
 import DATABASE from "./data/data.json";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { BookmarkContext } from "./contexts/BookmarkContext";
+import { TagContext } from "./contexts/TagContext";
+import { SortContext } from "./contexts/SortContext";
 
 export default function Home() {
-    const [sort, setSort] = useState("latest");
+    const { sort, setSort } = useContext(SortContext);
     const [more, setMore] = useState(5);
-    const [marked, setMarked] = useState([]);
-    const [filters, setFilters] = useState([]);
-
-    function handleMarked(id) {
-        if (!marked.includes(id)) {
-            setMarked([...marked, id]);
-        } else {
-            setMarked(marked.filter((item) => item !== id));
-        }
-    }
-
-    function handleFilters(title) {
-        if (!filters.includes(title)) {
-            setFilters([...filters, title]);
-        } else {
-            setFilters(filters.filter((item) => item !== title));
-        }
-    }
+    const { marked } = useContext(BookmarkContext);
+    const { tags } = useContext(TagContext);
 
     let data;
 
-    if (filters.length === 0) data = DATABASE;
+    if (tags.length === 0) data = DATABASE;
     else {
-        data = DATABASE.filter((item) => filters.includes(item.category));
+        data = DATABASE.filter((item) => tags.includes(item.category));
     }
 
     if (sort === "latest") {
@@ -49,7 +36,7 @@ export default function Home() {
         });
     }
 
-    if (sort === "marked") {
+    if (sort === "default") {
         data = data.toSorted((a, b) => {
             if (new Date(a.date) > new Date(b.date)) return -1;
             else return 1;
@@ -69,14 +56,7 @@ export default function Home() {
     }
 
     const ArticleList = data.slice(0, more).map((item) => {
-        return (
-            <ArticleItem
-                articleInfo={item}
-                key={item.id}
-                markedList={marked}
-                handleMarked={handleMarked}
-            />
-        );
+        return <ArticleItem articleInfo={item} key={item.id} />;
     });
 
     return (
@@ -98,12 +78,13 @@ export default function Home() {
                                 <select
                                     id="sort"
                                     name="sort"
+                                    value={sort}
                                     className="border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 p-2"
                                     onChange={(e) => setSort(e.target.value)}
                                 >
+                                    <option value="default">Default</option>
                                     <option value="latest">Latest</option>
                                     <option value="oldest">Oldest</option>
-                                    <option value="marked">Marked First</option>
                                 </select>
                             </div>
                         </div>
@@ -129,7 +110,7 @@ export default function Home() {
                     </div>
 
                     {/* Sidebar */}
-                    <Sidebar filters={filters} handleFilters={handleFilters} />
+                    <Sidebar />
                 </div>
             </div>
         </section>

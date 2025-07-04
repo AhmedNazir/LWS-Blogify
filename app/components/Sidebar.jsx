@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import DATABASE from "../data/data.json";
-import { useState } from "react";
+import { useContext } from "react";
+import { TagContext } from "../contexts/TagContext";
 
-function Sidebar({filters, handleFilters}) {
+function Sidebar() {
+    const { tags, handleTags } = useContext(TagContext);
 
     const activeCss =
         "bg-green-200 font-medium px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition-colors";
@@ -81,14 +83,13 @@ function Sidebar({filters, handleFilters}) {
     //     }
     // ];
 
-    const tagList = new Set();
+    const tagSet = new Set();
 
     DATABASE.forEach((element) => {
-        tagList.add(element.category);
+        tagSet.add(element.category);
     });
 
-    const tags = Array.from(tagList);
-
+    const tagsList = Array.from(tagSet);
 
     return (
         <>
@@ -99,17 +100,17 @@ function Sidebar({filters, handleFilters}) {
                             Discover more of what matters to you
                         </h3>
                         <div className="flex flex-wrap gap-2">
-                            {tags.map((item) => {
+                            {tagsList.map((item) => {
                                 return (
                                     <Link
                                         href={"#"}
                                         className={
-                                            filters.includes(item)
+                                            tags.includes(item)
                                                 ? activeCss
                                                 : normalCss
                                         }
                                         key={item}
-                                        onClick={() => handleFilters(item)}
+                                        onClick={() => handleTags(item)}
                                     >
                                         {item}
                                     </Link>
