@@ -24,8 +24,8 @@ function ArticleItem({ articleInfo, markedList, handleMarked }) {
             <article className="mb-10 pb-10 border-b border-gray-200">
                 <div className="flex items-center mb-4">
                     <img
-                        src={article.author.avatar}
-                        alt={article.author.name}
+                        src={articleInfo.author.avatar}
+                        alt={articleInfo.author.name}
                         className="h-12 w-12 rounded-full mr-4"
                     />
                     <span className="text-sm font-medium">
