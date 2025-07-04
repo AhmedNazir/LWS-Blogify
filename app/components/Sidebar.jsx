@@ -4,16 +4,8 @@ import Link from "next/link";
 import DATABASE from "../data/data.json";
 import { useState } from "react";
 
-function Sidebar({}) {
-    const [filters, setFilters] = useState([]);
+function Sidebar({filters, handleFilters}) {
 
-    function handleFilters(title) {
-        if (!filters.includes(title)) {
-            setFilters([...filters, title]);
-        } else {
-            setFilters(filters.filter((item) => item !== title));
-        }
-    }
     const activeCss =
         "bg-green-200 font-medium px-4 py-2 rounded-full text-sm hover:bg-gray-200 transition-colors";
     const normalCss =

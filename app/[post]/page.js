@@ -6,35 +6,40 @@ import Sidebar from "../components/Sidebar";
 import DATABASE from "../data/data.json";
 import ArticleItem from "../components/ArticleItem";
 
+function getRecommendation(data) {}
+
 export default function Post({ params }) {
     const query = decodeURIComponent(params.post);
-    const result = DATABASE.filter((item) => item.title === query);
+    const article = DATABASE.find((item) => item.title === query);
 
-    const article = result[0];
-    // return <p>Post: {params.post}</p>;
+    // const recommendList = DATABASE.filter(
+    //     (item) => item.author.name === article.author.name
+    // );
+
+    // let othersList = DATABASE.filter(
+    //     (item) => item.author.name !== article.author.name
+    // );
+
+    // othersList = othersList.toSorted((a, b) => {
+    //     if (new Date(a.date) > new Date(b.date)) return -1;
+    //     else return 1;
+    // });
+
+    let recommendList = DATABASE.toSorted((a, b) => {
+        if (new Date(a.date) > new Date(b.date)) return -1;
+        else return 1;
+    }).slice(0, 4);
+
+    // if (recommendList.length < 4) {
+    //     for (let index = 0; index < 4 - recommendList.length; index++) {
+    //         recommendList.push(othersList);
+    //     }
+    // }
+
+    console.log(recommendList);
 
     return (
         <>
-            <meta charSet="UTF-8" />
-            <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1.0"
-            />
-            <title>LWS Blogify | Learn with Sumit Assignment</title>
-            <link rel="icon" type="image/x-icon" href="./assets/favicon.svg" />
-            {/* Tailwind CSS v4 via CDN */}
-
-            {/* Satoshi Font */}
-            <link
-                href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap"
-                rel="stylesheet"
-            />
-            <style
-                dangerouslySetInnerHTML={{
-                    __html: "\n        body {\n            font-family: 'Satoshi', sans-serif;\n        }\n\n        .article-content p {\n            margin-bottom: 1.5rem;\n            font-size: 1.125rem;\n            line-height: 1.8;\n        }\n\n        .article-content h2 {\n            font-size: 1.75rem;\n            font-weight: 700;\n            margin-top: 2.5rem;\n            margin-bottom: 1rem;\n        }\n\n        .article-content h3 {\n            font-size: 1.5rem;\n            font-weight: 700;\n            margin-top: 2rem;\n            margin-bottom: 0.75rem;\n        }\n\n        .article-content ul,\n        .article-content ol {\n            margin-bottom: 1.5rem;\n            padding-left: 1.5rem;\n        }\n\n        .article-content ul {\n            list-style-type: disc;\n        }\n\n        .article-content ol {\n            list-style-type: decimal;\n        }\n\n        .article-content li {\n            margin-bottom: 0.5rem;\n            font-size: 1.125rem;\n            line-height: 1.8;\n        }\n\n        .article-content blockquote {\n            border-left: 4px solid #000;\n            padding-left: 1rem;\n            font-style: italic;\n            margin: 1.5rem 0;\n        }\n\n        .article-content pre {\n            background-color: #f7f7f7;\n            padding: 1rem;\n            border-radius: 0.5rem;\n            overflow-x: auto;\n            margin: 1.5rem 0;\n        }\n\n        .article-content code {\n            font-family: monospace;\n            background-color: #f7f7f7;\n            padding: 0.2rem 0.4rem;\n            border-radius: 0.25rem;\n        }\n    "
-                }}
-            />
-
             {/* Main Content */}
             <section className="py-10 border-t border-gray-200">
                 <div className="container mx-auto px-4">
@@ -87,33 +92,23 @@ export default function Post({ params }) {
                                         </h3>
 
                                         <div className="grid grid-cols-2 gap-4">
-                                            <ArticleItem
-                                                articleInfo={article}
-                                                markedList={[]}
-                                                handleMarked={() => {}}
-                                            />
-                                            <ArticleItem
-                                                articleInfo={article}
-                                                markedList={[]}
-                                                handleMarked={() => {}}
-                                            />
-                                            <ArticleItem
-                                                articleInfo={article}
-                                                markedList={[]}
-                                                handleMarked={() => {}}
-                                            />
-                                            <ArticleItem
-                                                articleInfo={article}
-                                                markedList={[]}
-                                                handleMarked={() => {}}
-                                            />
+                                            {recommendList.map((item) => {
+                                                return (
+                                                    <ArticleItem
+                                                        articleInfo={item}
+                                                        markedList={[]}
+                                                        handleMarked={() => {}}
+                                                        key={item.id}
+                                                    />
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 </section>
                             </div>
                         </div>
                         {/* Sidebar */}
-                        <Sidebar />
+                        <Sidebar filters={[]} handleFilters={() => {}} />
                     </div>
                 </div>
             </section>
