@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import BookmarkIconMark from "../assets/bookmark-mark.svg";
 import BookmarkIconUnmark from "../assets/bookmark-unmark.svg";
@@ -23,12 +23,10 @@ function ArticleItem({ articleInfo, markedList, handleMarked }) {
         <>
             <article className="mb-10 pb-10 border-b border-gray-200">
                 <div className="flex items-center mb-4">
-                    <Image
-                        src={articleInfo.author.avatar}
-                        alt="Author"
-                        width={24}
-                        height={24}
-                        className="rounded-full mr-2"
+                    <img
+                        src={article.author.avatar}
+                        alt={article.author.name}
+                        className="h-12 w-12 rounded-full mr-4"
                     />
                     <span className="text-sm font-medium">
                         {articleInfo.author.name}
